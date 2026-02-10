@@ -86,3 +86,4 @@ if __name__ == '__main__':
     # Protection for Windows Multiprocessing and Debug mode
     print("--- EchoSplit AI Server Starting ---")
     app.run(debug=True, port=6006, use_reloader=False)
+
