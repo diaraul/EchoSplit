@@ -1,0 +1,105 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip' # caching pip dependencies
+    - run: |
+        python -m pip install --upgrade pip
+        pip install -r brevets/requirements.txt
+        pip check
+
+    - name: Set permissions for Google Chrome
+      run: |
+        sudo chown -R $USER:$USER /opt/google/chrome
+        sudo chmod -R 777 /opt/google/chrome
+        find /opt/google -type l -delete
+        sudo rm -rf /etc/alternatives/google-chrome
+      shell: bash
+
+    - name: Fetch Chrome cached artifacts
+      uses: actions/cache@v4
+      id: cache-chrome
+      with:
+        path: |
+          /usr/share/applications/google-chrome.desktop
+          /opt/google/chrome
+          /usr/bin/google-chrome
+        key: chrome-${{ runner.os }}-v1
+
+    - name: Install linux packages
+      run: |
+        if [ ! -f /usr/bin/google-chrome ]; then
+          sudo apt-get update
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install ./google-chrome-stable_current_amd64.deb
+        fi
+        ./setup.sh
+    - name: a) AJAX in the frontend (static/js/calc.js)
+      id: a-ajax-in-the-frontend-static-js-calc-js
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: a) AJAX in the frontend (static/js/calc.js)
+        setup-command: "./setup.sh"
+        command: ". venv/bin/activate && cd brevets && python -m pytest autograder/test_check_calc_js.py"
+        timeout: 5
+        max-score: 10
+    - name: b) Logic in the backend (acp_times.py)
+      id: b-logic-in-the-backend-acp_times-py
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: b) Logic in the backend (acp_times.py)
+        setup-command: "./setup.sh"
+        command: . venv/bin/activate && bash brevets/autograder/test_acp_times.sh
+        timeout: 15
+        max-score: 30
+    - name: c) Frontend to backend interaction
+      id: c-frontend-to-backend-interaction
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: c) Frontend to backend interaction
+        setup-command: "./setup.sh"
+        command: . venv/bin/activate && python -m pytest brevets/autograder/test_ajax_interactions.py
+        timeout: 30
+        max-score: 30
+    - name: d) README is updated with a clear specification
+      id: d-readme-is-updated-with-a-clear-specification
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: d) README is updated with a clear specification
+        setup-command: "./setup.sh"
+        command: . venv/bin/activate && bash brevets/autograder/check_readme.sh
+        timeout: 5
+        max-score: 10
+    - name: e) You have at least 5 pytests and they all pass
+      id: e-you-have-at-least-5-pytests-and-they-all-pass
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: e) You have at least 5 pytests and they all pass
+        setup-command: "./setup.sh"
+        command: . venv/bin/activate && bash brevets/autograder/test_student_pytests.sh
+        timeout: 30
+        max-score: 20
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        A-AJAX-IN-THE-FRONTEND-STATIC-JS-CALC-JS_RESULTS: "${{steps.a-ajax-in-the-frontend-static-js-calc-js.outputs.result}}"
+        B-LOGIC-IN-THE-BACKEND-ACP_TIMES-PY_RESULTS: "${{steps.b-logic-in-the-backend-acp_times-py.outputs.result}}"
+        C-FRONTEND-TO-BACKEND-INTERACTION_RESULTS: "${{steps.c-frontend-to-backend-interaction.outputs.result}}"
+        D-README-IS-UPDATED-WITH-A-CLEAR-SPECIFICATION_RESULTS: "${{steps.d-readme-is-updated-with-a-clear-specification.outputs.result}}"
+        E-YOU-HAVE-AT-LEAST-5-PYTESTS-AND-THEY-ALL-PASS_RESULTS: "${{steps.e-you-have-at-least-5-pytests-and-they-all-pass.outputs.result}}"
+      with:
+        runners: a-ajax-in-the-frontend-static-js-calc-js,b-logic-in-the-backend-acp_times-py,c-frontend-to-backend-interaction,d-readme-is-updated-with-a-clear-specification,e-you-have-at-least-5-pytests-and-they-all-pass

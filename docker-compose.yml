@@ -1,0 +1,16 @@
+services:
+  echo-service:
+    build: .
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "6006:6006"
+    environment:
+      - MONGODB_HOSTNAME=mongodb
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
