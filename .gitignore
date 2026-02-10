@@ -186,3 +186,4 @@ uploads/
 static/output/
 *.wav
 *.mp3
+.idea/
