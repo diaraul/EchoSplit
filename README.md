@@ -20,7 +20,7 @@ To run this project locally, follow these steps:
 ### 2. Environment Setup
 ```bash
 # Clone the repository
-git clone [https://github.com/diaraul/EchoSplit.git]
+git clone https://github.com/diaraul/EchoSplit.git
 
 # Create a virtual environment
 python -m venv echo-env
