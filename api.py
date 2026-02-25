@@ -58,7 +58,6 @@ def upload_file():
 
         print(f"AI is starting work on: {file.filename}")
 
-        # --- THE FIX IS HERE ---
         # We create the separator INSIDE the function so the
         # TensorFlow 'Graph' doesn't get out of scope.
         try:
