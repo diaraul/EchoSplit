@@ -58,17 +58,15 @@ def upload_file():
 
         print(f"AI is starting work on: {file.filename}")
 
-        # --- THE FIX IS HERE ---
         # We create the separator INSIDE the function so the
         # TensorFlow 'Graph' doesn't get out of scope.
         try:
             from spleeter.separator import Separator
-            # Use default settings to avoid the 'codec' error from earlier
+            # Use default settings to avoid the 'codec' error
             local_separator = Separator('spleeter:2stems')
             local_separator.separate_to_file(input_path, OUTPUT_FOLDER)
         except Exception as e:
             return f"AI Error: {str(e)}"
-        # -----------------------
 
         # 3. Create links to the output (Spleeter defaults to .wav)
         song_name = os.path.splitext(file.filename)[0]
