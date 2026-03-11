@@ -3,32 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EchoSplit AI</title>
+    <title>EchoSplit AI | Deep Learning Audio Isolation</title>
     <style>
-        body { font-family: sans-serif; text-align: center; margin-top: 50px; }
-        .container { border: 1px solid #ccc; padding: 20px; display: inline-block; border-radius: 10px; }
-        .loading { display: none; color: blue; font-weight: bold; }
+        /* Modern Data Science Aesthetic */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background-color: #f4f7f6;
+            color: #333;
+            margin-top: 80px;
+        }
+        .container {
+            background: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 40px;
+            display: inline-block;
+            border-radius: 15px;
+            max-width: 500px;
+        }
+        h1 { color: #2c3e50; margin-bottom: 5px; }
+        .subtitle { color: #7f8c8d; margin-bottom: 25px; font-size: 0.9em; }
+
+        input[type="file"] {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px dashed #3498db;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover { background-color: #2980b9; }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+        }
+        /* A simple CSS spinner for a "pro" look */
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>EchoSplit AI</h1>
-        <p>Upload a song to separate vocals from instruments.</p>
+        <p class="subtitle">Data Science & Music Technology | 5-Stem Neural Isolation</p>
+
+        <p>Upload a song to isolate <strong>Vocals, Drums, Bass, Piano, and More</strong>.</p>
 
         <form action="/upload" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
             <input type="file" name="file" accept=".mp3,.wav" required>
-            <br><br>
-            <button type="submit">Split Track</button>
+            <br>
+            <button type="submit">Begin Neural Separation</button>
         </form>
 
         <div id="loadingMessage" class="loading">
-            <p>AI is processing... This may take a minute.</p>
+            <div class="spinner"></div>
+            <p><strong>U-Net Model is processing...</strong></p>
+            <p style="font-size: 0.8em; color: #7f8c8d;">This takes a bit longer for 5-stem high-fidelity separation.</p>
         </div>
     </div>
 
     <script>
         function showLoading() {
             document.getElementById('loadingMessage').style.display = 'block';
+            // Disable the button to prevent double-clicks
+            document.querySelector('button').disabled = true;
+            document.querySelector('button').innerText = "Processing...";
         }
     </script>
 </body>

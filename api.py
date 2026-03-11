@@ -1,8 +1,12 @@
 import os
+import sys
 import time
 import shutil
 from flask import Flask, render_template, request
 from spleeter.separator import Separator
+
+base_path = os.path.dirname(os.path.abspath(__file__))
+os.environ["PATH"] += os.pathsep + base_path
 
 app = Flask(__name__)
 
@@ -56,29 +60,29 @@ def upload_file():
         input_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(input_path)
 
-        print(f"AI is starting work on: {file.filename}")
+        print(f"AI is starting 5-stem separation on: {file.filename}")
 
         # We create the separator INSIDE the function so the
         # TensorFlow 'Graph' doesn't get out of scope.
         try:
-            from spleeter.separator import Separator
             # Use default settings to avoid the 'codec' error
-            local_separator = Separator('spleeter:2stems')
+            local_separator = Separator('spleeter:5stems')
             local_separator.separate_to_file(input_path, OUTPUT_FOLDER)
         except Exception as e:
             return f"AI Error: {str(e)}"
 
-        # 3. Create links to the output (Spleeter defaults to .wav)
+        # Create paths for all 5 stems
         song_name = os.path.splitext(file.filename)[0]
-        vocal_path = f"/static/output/{song_name}/vocals.wav"
-        music_path = f"/static/output/{song_name}/accompaniment.wav"
+        stems = ['vocals', 'drums', 'bass', 'piano', 'other']
 
-        return f"""
-        <h1>Split Complete!</h1>
-        <p><a href="{vocal_path}" download>Download Vocals</a></p>
-        <p><a href="{music_path}" download>Download Music</a></p>
-        <br><a href="/">Split another song</a>
-        """
+        # Build the HTML response with all 5 links
+        links_html = "<h1>5-Stem Split Complete!</h1>"
+        for stem in stems:
+            path = f"/static/output/{song_name}/{stem}.wav"
+            links_html += f'<p><a href="{path}" download>Download {stem.capitalize()}</a></p>'
+
+        links_html += '<br><a href="/">Split another song</a>'
+        return links_html
 
 if __name__ == '__main__':
     # Protection for Windows Multiprocessing and Debug mode

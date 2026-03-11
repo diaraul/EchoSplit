@@ -186,5 +186,7 @@ uploads/
 static/output/
 *.wav
 *.mp3
+*.exe
+.env
 .idea/
 .idea/*
