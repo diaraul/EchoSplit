@@ -190,3 +190,6 @@ static/output/
 .env
 .idea/
 .idea/*
+
+# AI Models
+pretrained_models/
