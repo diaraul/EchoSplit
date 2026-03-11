@@ -15,7 +15,7 @@ To run this project locally, follow these steps:
 
 ### 1. Prerequisites
 * **Python 3.10** (Required for TensorFlow/Spleeter compatibility)
-* **FFmpeg**: Must be installed and added to your system PATH for audio processing.
+* **FFmpeg**: Must be installed and added to your system PATH for audio processing. Go to: gyan.dev and install ffmpeg-git-full.7z. Place ffmpeg.exe and ffprobe.exe alongside api.py in the EchoSplit folder. I recommend placing the downloaded folder in C:\ffmpeg 
 
 ### 2. Environment Setup
 ```bash
