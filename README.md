@@ -2,7 +2,7 @@
 
 **Developed by Raul Diaz** *Data Science Student (Music Tech Emphasis) | University of Oregon*
 
-## 🎵 Project Overview
+## Project Overview
 EchoSplit is an end-to-end web application that leverages Deep Learning to perform high-fidelity audio source separation. Unlike basic vocal removers, EchoSplit provides **5-stem isolation**, extracting:
 * **Vocals**
 * **Drums**
@@ -13,12 +13,12 @@ EchoSplit is an end-to-end web application that leverages Deep Learning to perfo
 The backend utilizes the Spleeter library to analyze spectrograms and reconstruct isolated audio signals in real-time.
 
 
-## 🛠 Technical Hurdles & Engineering Solutions
+## Technical Hurdles & Engineering Solutions
 * **Dependency Synchronization:** Successfully resolved a critical dependency conflict between legacy ML requirements (Spleeter/Typer) and modern web frameworks (Flask 2.2). This was achieved by pinning a "bridge version" of the **Click (7.1.2)** and **Werkzeug (2.0.3)** libraries to maintain system-wide stability.
 * **FFmpeg Binary Integration:** Orchestrated system-level audio processing by integrating FFmpeg binaries directly into the application environment, ensuring the application can run regardless of local Windows PATH configurations.
 * **Resource Efficiency:** Configured the TensorFlow backend to handle intensive U-Net model computations on CPU-bound hardware, ensuring accessibility for users without dedicated GPUs.
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### 1. Prerequisites
 * **Python 3.10** (Required for TensorFlow/Spleeter compatibility)
