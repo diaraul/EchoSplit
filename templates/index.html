@@ -59,6 +59,24 @@
             animation: spin 1s linear infinite;
             margin: 10px auto;
         }
+
+        .stem-container {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        .stem-label {
+            font-weight: bold;
+            text-transform: capitalize;
+            margin-bottom: 5px;
+            display: block;
+            color: #2c3e50;
+        }
+        audio {
+            width: 100%;
+            height: 35px;
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -69,7 +87,7 @@
 
         <p>Upload a song to isolate <strong>Vocals, Drums, Bass, Piano, and More</strong>.</p>
 
-        <form action="/upload" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
+        <form onsubmit="handleUpload(event)" enctype="multipart/form-data">
             <input type="file" name="file" accept=".mp3,.wav" required>
             <br>
             <button type="submit">Begin Neural Separation</button>
@@ -80,14 +98,60 @@
             <p><strong>U-Net Model is processing...</strong></p>
             <p style="font-size: 0.8em; color: #7f8c8d;">This takes a bit longer for 5-stem high-fidelity separation.</p>
         </div>
+
+        <div id="results" style="display: none; margin-top: 30px; text-align: left;">
+            <h3 style="text-align: center;">Isolated Stems</h3>
+            <div id="stemPlayers"></div>
+            <br>
+            <button onclick="window.location.reload()" style="background-color: #95a5a6; width: 100%;">Process Another Track</button>
+        </div>
     </div>
 
     <script>
+        async function handleUpload(event) {
+            event.preventDefault();
+            showLoading();
+
+            const formData = new FormData(event.target);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    document.querySelector('form').style.display = 'none';
+                    const resultsDiv = document.getElementById('results');
+                    const playersContainer = document.getElementById('stemPlayers');
+                    resultsDiv.style.display = 'block';
+
+                    // Create a player for each stem (vocals, drums, bass, piano, other)
+                    data.files.forEach(file => {
+                        const div = document.createElement('div');
+                        div.className = 'stem-container';
+                        div.innerHTML = `
+                            <span class="stem-label">${file.name}</span>
+                            <audio controls>
+                                <source src="${file.url}" type="audio/wav">
+                                Your browser does not support the audio element.
+                            </audio>
+                        `;
+                        playersContainer.appendChild(div);
+                    });
+                }
+            } catch (error) {
+                alert("Separation failed. Check terminal for FFmpeg errors.");
+                window.location.reload();
+            }
+        }
+
         function showLoading() {
             document.getElementById('loadingMessage').style.display = 'block';
-            // Disable the button to prevent double-clicks
             document.querySelector('button').disabled = true;
-            document.querySelector('button').innerText = "Processing...";
+            document.querySelector('button').innerText = "Analyzing Frequencies...";
         }
     </script>
 </body>
