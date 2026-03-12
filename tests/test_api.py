@@ -48,3 +48,8 @@ def test_upload_invalid_extension(client):
     response = client.post('/upload', data=data, content_type='multipart/form-data')
     assert response.status_code == 400
     assert b"File type not supported" in response.data
+
+def test_download_all_404(client):
+    """Verify the zip route returns 404 if the song folder doesn't exist."""
+    response = client.get('/download_all/non_existent_song')
+    assert response.status_code == 404

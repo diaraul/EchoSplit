@@ -107,19 +107,24 @@ def upload_file():
         # This handles cases where the file extension isn't allowed
         return jsonify({"success": False, "error": "File type not supported. Please upload MP3, WAV, or FLAC."}), 400
 
-
+@app.route('/download_all/<song_name>')
 def download_all(song_name):
     # Path to the folder containing the 5 stems
     song_folder = os.path.join(OUTPUT_FOLDER, song_name)
 
     if not os.path.exists(song_folder):
-        return "Folder not found", 404
+        return jsonify({"success": False, "error": "Stem folder not found"}), 404
 
     # Create a buffer to hold the zip data in memory (faster than writing to disk)
     memory_file = io.BytesIO()
+
     with zipfile.ZipFile(memory_file, 'w', zipfile.ZIP_DEFLATED) as zf:
         for root, dirs, files in os.walk(song_folder):
             for file in files:
+                # Security check: skip hidden system files
+                if file.startswith('.') or not file.endswith('.wav'):
+                    continue
+
                 file_path = os.path.join(root, file)
                 # Add file to zip, using just the filename (no full paths inside zip)
                 zf.write(file_path, arcname=file)
@@ -130,7 +135,7 @@ def download_all(song_name):
         memory_file,
         mimetype='application/zip',
         as_attachment=True,
-        download_name=f"{song_name}_stems.zip"
+        download_name=f"{song_name}_EchoSplit_stems.zip"
     )
 
 if __name__ == '__main__':
