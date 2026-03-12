@@ -10,6 +10,9 @@ import time
 import shutil
 from flask import Flask, render_template, request, jsonify
 from spleeter.separator import Separator
+import zipfile
+from flask import send_file
+import io
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 os.environ["PATH"] += os.pathsep + base_path
@@ -103,6 +106,32 @@ def upload_file():
     else:
         # This handles cases where the file extension isn't allowed
         return jsonify({"success": False, "error": "File type not supported. Please upload MP3, WAV, or FLAC."}), 400
+
+
+def download_all(song_name):
+    # Path to the folder containing the 5 stems
+    song_folder = os.path.join(OUTPUT_FOLDER, song_name)
+
+    if not os.path.exists(song_folder):
+        return "Folder not found", 404
+
+    # Create a buffer to hold the zip data in memory (faster than writing to disk)
+    memory_file = io.BytesIO()
+    with zipfile.ZipFile(memory_file, 'w', zipfile.ZIP_DEFLATED) as zf:
+        for root, dirs, files in os.walk(song_folder):
+            for file in files:
+                file_path = os.path.join(root, file)
+                # Add file to zip, using just the filename (no full paths inside zip)
+                zf.write(file_path, arcname=file)
+
+    memory_file.seek(0)
+
+    return send_file(
+        memory_file,
+        mimetype='application/zip',
+        as_attachment=True,
+        download_name=f"{song_name}_stems.zip"
+    )
 
 if __name__ == '__main__':
     # Protection for Windows Multiprocessing and Debug mode
