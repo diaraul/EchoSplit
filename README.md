@@ -1,3 +1,8 @@
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=for-the-badge&logo=TensorFlow&logoColor=white)
+![University of Oregon](https://img.shields.io/badge/University%20of%20Oregon-%23154733.svg?style=for-the-badge)
+
 # EchoSplit AI: Multi-Stem Source Separation
 
 **Developed by Raul Diaz** *Data Science Student (Music Tech Emphasis) | University of Oregon*
@@ -29,7 +34,7 @@ The backend utilizes the Spleeter library to analyze spectrograms and reconstruc
 ### 2. Environment Setup
 ```bash
 # Clone the repository
-git clone [https://github.com/diaraul/EchoSplit.git](https://github.com/diaraul/EchoSplit.git)
+git clone https://github.com/diaraul/EchoSplit.git
 
 # Navigate to project
 cd EchoSplit
@@ -45,3 +50,8 @@ source echo-env/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
+
+# Launching the Application
+# 1. Ensure your virtual environment is active.
+# 2. Run the Flask server:
+python api.py
